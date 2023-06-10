@@ -1,0 +1,238 @@
+<html>
+  <head>
+    <link rel="stylesheet" href="normalize.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css"
+          integrity="sha512-NhSC1YmyruXifcj/KFRWoC561YpHpc5Jtzgvbuzx5VozKpWvQ+4nXhPdFgmx8xqexRcpAglTj9sIBWINXa8x5w=="
+          crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Encode+Sans:wght@300;500;700&display=swap" rel="stylesheet">
+          
+    <title>Remote development interface</title>
+    <style>
+      .container {
+        max-width: 1250px;
+        margin: 0 auto;
+      }
+
+      ul {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+      }
+
+      h1 {
+        margin: 0;
+      }
+
+      #editor-container {
+        height: 600px;
+        position: relative;
+        z-index: 1;
+      }
+
+      .header {
+        background: linear-gradient(to left, rgba(0,0,0,5), #929292);
+        border-bottom: 1px solid #25282c;
+      }
+
+      .header__inner {
+        display: flex;
+        justify-content: space-between;
+        padding: 10px 0;
+      }
+
+      .header__logo img {
+        width: 50px;
+        height: 50px;
+      }
+
+      .header__title {
+        color: #fff;
+        font-family: 'Encode Sans', sans-serif;
+        font-weight: 0;
+      }
+
+      .console {
+        background-image: linear-gradient(to top, rgba(0,0,0,1), rgba(0,0,0,0.9)), url(assets/img/1.jpg);
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+        background-size: cover;
+        height: 100vh;
+
+      }
+
+      .console__wrapper {
+        padding-top: 50px;
+        padding-bottom: 100px;
+      }
+
+      .console__header {
+        background-color: #25282c;
+        border-bottom: 1px solid rgb(59, 59, 59);
+        position: relative;
+        z-index: 10;
+      }
+
+      .console__header-list {
+        display: flex;
+        justify-content: flex-start;
+      }
+
+      .console__header-item {
+        padding: 5px;
+        font-family: 'Encode Sans', sans-serif;
+        font-weight: 300;
+        color: aliceblue;
+      }
+
+      .console__header-item label {
+        cursor: pointer;
+      }
+      
+      .console__header-item input {
+        display: none;
+      }
+
+      .console__header-item:hover {
+        background-color: #3f4144;
+        cursor: pointer;
+      }
+
+      .console__content-inner {
+        display: flex;
+        justify-content: space-between;
+        color: #FFF;
+        font-family: 'Encode Sans', sans-serif;
+        padding-top: 20px;
+
+        BACKGROUND-COLOR: #1C1C1C;
+        HEIGHT: 60PX;
+        PADDING-RIGHT: 50PX;
+
+      }
+
+      .console__content-inner p {
+        margin: 0;
+        max-width: 800px;
+        font-weight: 300;
+        font-size: 18px;
+      }
+
+      .console__button-wrapper {
+        align-items:flex-start;
+      }
+
+      .console__button {
+        display: inline-block;
+        border: none;
+        padding: 10px 30px;
+
+        border-radius: 10px;
+        background-color: #2cbc5d;
+
+        color: #fff;
+        font-family: 'Encode Sans', sans-serif;
+        font-weight: 500;
+        font-size: 16px;
+
+        text-decoration: none;
+        letter-spacing: 1px;
+
+        transition: all .2s ease-in-out;
+      }
+      .console__button:hover {
+        background-color: #fff;
+        cursor: pointer;
+        color: #07461f;
+      }
+
+      .console__test_button{
+        display: inline-block;
+        border: none;
+        padding: 10px 20px;
+
+        border-radius: 10px;
+        background-color: #333435;
+
+        color: #fff;
+        font-family: 'Encode Sans', sans-serif;
+        font-weight: 500;
+        font-size: 16px;
+
+        margin-right: 15px;
+
+        text-decoration: none;
+        letter-spacing: 1px;
+
+        transition: all .2s ease-in-out;
+      }
+      .console__test_button:hover {
+        background-color: #fff;
+        cursor: pointer;
+        color: #07461f;
+      }
+
+    </style>
+  </head>
+<body>
+  <section class="header">
+    <div class="container header__inner">
+      <div class="header__logo">
+        <img src="{{ url_for('static',filename='img/hse.png') }}" alt="">
+    </div>
+      <h1 class="header__title">Remote development interface</h1>
+    </div>
+  </section>
+
+  <section class="console">
+    <div class="console__wrapper">
+      <div class="container console__inner">
+        <form method="POST" enctype="multipart/form-data" action="{{ url_for('flash') }}">
+  
+          <div class="console__header">
+            <ul class="console__header-list">
+              <li class="console__header-item">
+                <label for="firmware">File<input type="file" name="firmware" id="firmware"></label>
+              </li>
+            </ul>
+          </div>
+  
+          <div class="console-wrapper" >
+            <div id="editor-container"></div>
+          </div>
+          
+          <div class="console__content-inner">
+            <p>{{ rv }}</p>
+            <div class="console__button-wrapper">
+              <button type="submit" class="console__button">Flash</button>
+            </div>
+          </div>
+  
+        </form>
+      </div>
+    </div>
+  </section>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.12/ace.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.12/mode-c_cpp.js"></script>
+    <script>
+      var editor = ace.edit("editor-container");
+      editor.setTheme("ace/theme/merbivore_soft");
+      editor.session.setMode("ace/mode/c_cpp");
+
+      var fileInput = document.getElementById('firmware');
+      fileInput.addEventListener('change', function() {
+        var file = fileInput.files[0];
+        var reader = new FileReader();
+        reader.onload = function() {
+          var contents = reader.result;
+          editor.setValue(contents);
+        };
+
+        reader.readAsText(file);
+      });
+    </script>
+
+</body>
+</html>

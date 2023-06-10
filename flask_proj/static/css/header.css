@@ -1,0 +1,26 @@
+body {
+    font-family: 'JetBrains Mono';
+    font-size: 20px;
+    background-color: #272727;
+}
+.container {
+    width: 1300px;
+    margin: 0 auto;
+}
+header {
+    background-color: #4b4b4b;
+}
+.header_list {
+    display: flex;
+    justify-content: space-between;
+    list-style: none;
+    width: 300px;
+}
+.header_list_item {
+    padding: 10px;
+}
+.header_list_item > a {
+    padding: 10px;
+    text-decoration: none;
+    color: #fff;
+}

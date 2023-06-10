@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="{{ url_for('static',filename='css/normalize.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static',filename='css/fonts.css') }}">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="{{ url_for('static',filename='css/header.css') }}">
+    <style>
+        * {
+            color: #fff;
+        }
+    </style>
+</head>
+    <body>
+        <header>
+            <div class="container">
+                <ul class="header_list">
+                    <li class="header_list_item"><a href="{{ url_for('reserve') }}">Reserve</a></li>
+                    <li class="header_list_item"><a href="/send">Send</a></li>
+                    <li class="header_list_item"><a href="/monitor">Monitor</a></li>
+                    <li class="header_list_item"><a href="{{ url_for('profile') }}">Profile</a></li>
+                </ul>
+            </div>
+        </header>
+        <p>
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <ul>
+            {% for message in messages %}
+                <li>{{ message }}</li>
+            {% endfor %}
+            </ul>
+        {% endif %}
+        {% endwith %}
+        </p>
+        <main>
+
+
+        </main>
+    </body>
+</html>

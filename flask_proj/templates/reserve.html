@@ -1,0 +1,74 @@
+<html>
+<head>
+{#    <link rel="stylesheet" href="{{ url_for('static',filename='css/normalize.css') }}">#}
+	<link rel="stylesheet" href="{{ url_for('static',filename='css/fonts.css') }} ">
+	<title>Reservation</title>
+	<link rel="stylesheet" href="{{ url_for('static',filename='css/header.css') }}">
+	<style>
+		* {
+			font-family: 'JetBrains Mono';
+			font-size: 20px;
+		}
+		body {
+			background-color: #272727;
+			margin:0;
+		}
+		.wrapper {
+			background-color: #414141;
+			position: relative;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%, -50%);
+			width: 500px;
+			text-align: center;
+			justify-content: center;
+			align-items: center;
+			border-radius: 9px;
+			box-shadow: 0px 0px 48px rgba(0, 0, 0, 0.25);
+			padding: 50px 0;
+			color: #FFF;
+		}
+		.form-group {
+			margin-bottom: 20px;
+			color: #FFF;
+		}
+
+		.form-button {
+			width: 115px;
+			height: 40px;
+			background: rgba(43, 188, 93, 0.75);
+			border-radius: 3px;
+			color: #fff;
+			border: none;
+		}
+
+
+	</style>
+</head>
+
+<body>
+	<header>
+		<div class="container">
+			<ul class="header_list">
+                    <li class="header_list_item"><a href="{{ url_for('reserve') }}">Reserve</a></li>
+                    <li class="header_list_item"><a href="/send">Send</a></li>
+                    <li class="header_list_item"><a href="/monitor">Monitor</a></li>
+                    <li class="header_list_item"><a href="{{ url_for('profile') }}">Profile</a></li>
+			</ul>
+		</div>
+	</header>
+    <div class="wrapper">
+		<h2>Reservation Form</h2>
+		<form action="{{ url_for('reserve') }}" method="post" id="date-time-form">
+			<div class="form-group">
+				<label for="time">Date:</label>
+				<input type="date" id="start" name="date" required>
+				<label for="time">Time:</label>
+				<input type="time" id="time" name="time" required>
+				<p> {{rv}}</p>
+			</div>
+			<button type="submit" class="form-button">Reserve</button>
+		</form>
+	</div>
+</body>
+</html>

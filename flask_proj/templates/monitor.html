@@ -1,0 +1,136 @@
+
+<html>
+<head>
+    <link rel="stylesheet" href="{{ url_for('static',filename='css/normalize.css') }}">
+	<link rel="stylesheet" href="{{ url_for('static',filename='css/fonts.css') }} ">
+	<title>Monitor</title>
+	<link rel="stylesheet" href="{{ url_for('static',filename='css/header.css') }}">
+	<style>
+		* {
+			font-family: 'JetBrains Mono';
+			font-size: 20px;
+		}
+		body {background-image: url("/static/img/back2.jpg");
+			background-color: #272727;
+			margin:0;
+		}
+		.wrapper {
+			background-color: #414141;
+			width: 640px;
+			text-align: center;
+			justify-content: center;
+			align-items: center;
+			border-radius: 9px;
+			box-shadow: 0px 0px 48px rgba(0, 0, 0, 0.25);
+			padding: 50px 0;
+			color: #FFF;
+		}
+		.form-button {
+            margin-top: 20px;
+			width: 115px;
+			height: 40px;
+			background: rgba(43, 188, 93, 0.75);
+			border-radius: 3px;
+			color: #fff;
+			border: none;
+		}
+		.button-pad {
+            position: absolute;
+            left: -400px; 
+			background-color: #414141;
+			width: 140px;
+			text-align: center;
+			justify-content: center;
+			align-items: center;
+			border-radius: 9px;
+			box-shadow: 0px 0px 48px rgba(0, 0, 0, 0.25);
+			padding: 50px 0;
+			color: #FFF;
+		}
+		.simulate-button {
+			width: 40px;
+			height: 40px;
+			border-radius: 3px;
+			color: #000;
+			border: none;
+		}
+        .main-box {
+            margin: 0 auto;
+            width: 600px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 50px;
+            justify-content: center;
+        }
+	</style>
+</head>
+
+<body>
+	<header>
+		<div class="container">
+			<ul class="header_list">
+                    <li class="header_list_item"><a href="{{ url_for('reserve') }}">Reserve</a></li>
+                    <li class="header_list_item"><a href="/send">Send</a></li>
+                    <li class="header_list_item"><a href="/monitor">Monitor</a></li>
+                    <li class="header_list_item"><a href="{{ url_for('profile') }}">Profile</a></li>
+			</ul>
+		</div>
+	</header>
+
+	<script src="{{ url_for('static',filename='js/jquery.js') }}"></script>
+    <div class="main-box">
+        <div class="button-pad">
+            <button id="button1" class="simulate-button" data-button="button1">1</button>
+            <button id="button2" class="simulate-button" data-button="button2">2</button>
+            <button id="button3" class="simulate-button" data-button="button3">3</button>
+            <button id="button4" class="simulate-button" data-button="button4">4</button>
+        </div>
+
+
+        <div class="wrapper">
+            <h2>Reservation Form</h2>
+            <img id="video_feed" width="640" height="480" />
+            <form action="{{ url_for('flash') }}" method="post">
+                <button type="submit" class="form-button">Flash</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+		$(document).ready(function() {
+			$('.simulate-button').click(function() {
+			var button = $(this).data('button');
+			$.ajax({
+				url: '/simulate_button',
+				type: 'POST',
+				data: { button: button },
+				success: function(response) {
+				console.log('Button press simulated successfully.');
+				},
+				error: function(error) {
+				console.error('Error simulating button press:', error);
+				}
+			});
+			});
+		});
+	</script>
+    <div>
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <ul>
+            {% for message in messages %}
+                <li>{{ message }}</li>
+            {% endfor %}
+            </ul>
+        {% endif %}
+        {% endwith %}
+    </div>
+    <script type="text/javascript">
+        var video_url = "/video_feed";
+        var video_feed = document.getElementById("video_feed");
+        video_feed.setAttribute("src", video_url);
+    </script>
+</body>
+</html>
+
