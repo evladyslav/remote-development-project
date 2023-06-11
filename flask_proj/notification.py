@@ -1,5 +1,6 @@
 from dotenv import load_dotenv
 import os 
+import requests 
 
 
 def send_notification(url):  

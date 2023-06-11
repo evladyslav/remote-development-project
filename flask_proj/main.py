@@ -10,6 +10,7 @@ from dotenv import load_dotenv
 from monitor import generate_frames
 from test import * 
 from buttons import * 
+from notification import * 
 
 
 # Load enviroment variables 
@@ -125,7 +126,7 @@ created_conf_path = ''
 @login_required
 def send():
     global created_conf_path
-    reservation = Reservation.query.filter_by(user_id=current_user.id).first() # !!!!! 
+    reservation = Reservation.query.filter_by(user_id=current_user.id).order_by(Reservation.date).first() #$ 
     if reservation and reservation.date <= datetime.datetime.now():
         if request.method == 'POST':
             firmware = request.files['firmware']
@@ -147,7 +148,7 @@ def monitor():
         msg('You have to upload binary file')
         return redirect(url_for('send'))
     user_id = current_user.id
-    reservation = Reservation.query.filter_by(user_id=user_id).first()
+    reservation = Reservation.query.filter_by(user_id=user_id).order_by(Reservation.date).first()
     if reservation and reservation.date <= datetime.datetime.now():
         return render_template('monitor.html')
     else:
@@ -160,8 +161,6 @@ def simulate_button():
     button = request.form['button']
     press_button(button)
     return redirect('/monitor')
-
-
 
 
 @app.route('/video_feed')
