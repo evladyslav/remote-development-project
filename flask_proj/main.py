@@ -8,9 +8,8 @@ from flash import make_conf, flasher
 from models import *
 from dotenv import load_dotenv
 from monitor import generate_frames
-from test import * 
 from buttons import * 
-from notification import * 
+
 
 
 # Load enviroment variables 
@@ -28,10 +27,6 @@ conf_path = os.getenv('CONFIG_PATH')  # Init paths for firmwares
 
 # Init additional functions for lab completing
 init_buttons() 
-init_tunnel(PORT)
-public_url = ngrok.get_tunnels()[0].public_url
-
-send_notification(public_url)  # Send url to channel 
 
 # Create relations 
 with app.app_context(): 
@@ -173,6 +168,7 @@ def video_feed():
 def flash():
     if request.method == "POST": 
         rv = flasher(created_conf_path)
+
         return redirect(url_for('monitor'))
 
 
@@ -197,5 +193,8 @@ def delete_reservation(reservation_id):
 
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=PORT)
+    from waitress import serve
+
+    serve(app, host='0.0.0.0', port=PORT)
+    # app.run(host='0.0.0.0', port=PORT)
 
