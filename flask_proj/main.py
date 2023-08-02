@@ -8,15 +8,12 @@ from flash import make_conf, flasher
 from models import *
 from dotenv import load_dotenv
 from monitor import generate_frames
-from buttons import * 
+from buttons import *
 
-
-
-# Load enviroment variables 
+# Load enviroment variables
 load_dotenv()
-PORT = os.getenv('APP_PORT')
 
-# Init Flask app 
+# Init Flask app
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db.sqlite3'
@@ -26,10 +23,10 @@ login_manager = LoginManager(app)
 conf_path = os.getenv('CONFIG_PATH')  # Init paths for firmwares
 
 # Init additional functions for lab completing
-init_buttons() 
+init_buttons()
 
-# Create relations 
-with app.app_context(): 
+# Create relations
+with app.app_context():
     db.create_all()
 
 
@@ -40,6 +37,7 @@ def load_user(user_id):
 
 @app.route('/', methods=['GET'])
 def index():
+    delete_expired_records()
     return render_template('login.html')
 
 
@@ -114,14 +112,20 @@ def reserve():
     return render_template('reserve.html')
 
 
-created_conf_path = ''
+def delete_expired_records():
+    expired_records = Reservation.query.filter(
+        (Reservation.date + datetime.timedelta(minutes=15)) < datetime.datetime.utcnow()
+    ).all()
+    for record in expired_records:
+        db.session.delete(record)
+    db.session.commit()
 
 
 @app.route('/send', methods=['GET', 'POST'])
 @login_required
 def send():
     global created_conf_path
-    reservation = Reservation.query.filter_by(user_id=current_user.id).order_by(Reservation.date).first() #$ 
+    reservation = Reservation.query.filter_by(user_id=current_user.id).order_by(Reservation.date).first()  # $
     if reservation and reservation.date <= datetime.datetime.now():
         if request.method == 'POST':
             firmware = request.files['firmware']
@@ -129,8 +133,8 @@ def send():
             firmware.save(fr'../firmwares/{filename}')
             username = current_user.id
             created_conf_path = make_conf(conf_path, filename, username)
-            return redirect(url_for('monitor'))
-        return render_template('send.html')
+            return redirect(url_for('monitor', ccp=created_conf_path))
+        return render_template('send.html', ccp=None)
     else:
         msg('You have no reservation or your reservation time has not come yet')
         return redirect(url_for('main'))
@@ -139,16 +143,14 @@ def send():
 @app.route('/monitor', methods=['GET', 'POST'])
 @login_required
 def monitor():
-    if not created_conf_path: 
+    ccp = request.args.get('ccp')
+    if not ccp:
         msg('You have to upload binary file')
         return redirect(url_for('send'))
-    user_id = current_user.id
-    reservation = Reservation.query.filter_by(user_id=user_id).order_by(Reservation.date).first()
-    if reservation and reservation.date <= datetime.datetime.now():
+    if Reservation.query.filter_by(user_id=current_user.id).order_by(Reservation.date).first():
         return render_template('monitor.html')
-    else:
-        msg('You have no reservation or your reservation time has not come yet')
-        return redirect(url_for('main'))
+    msg('You have no reservation or your reservation time has not come yet')
+    return redirect(url_for('main'))
 
 
 @app.route('/simulate_button', methods=['POST'])
@@ -166,9 +168,8 @@ def video_feed():
 
 @app.route('/flash', methods=['POST'])
 def flash():
-    if request.method == "POST": 
+    if request.method == "POST":
         rv = flasher(created_conf_path)
-
         return redirect(url_for('monitor'))
 
 
@@ -190,11 +191,3 @@ def delete_reservation(reservation_id):
     else:
         msg('You are not authorized to delete this reservation')
     return redirect(url_for('profile'))
-
-
-if __name__ == '__main__':
-    from waitress import serve
-
-    serve(app, host='0.0.0.0', port=PORT)
-    # app.run(host='0.0.0.0', port=PORT)
-
