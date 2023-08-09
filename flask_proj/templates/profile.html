@@ -1,18 +1,12 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <link rel="stylesheet" href="{{ url_for('static',filename='css/normalize.css') }}">
     <link rel="stylesheet" href="{{ url_for('static',filename='css/fonts.css') }}">
+    <title>Profile</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="{{ url_for('static',filename='css/header.css') }}">
-    <style>
-        * {
-            color: #fff;
-        }
-        .reservation_button {
-            color: #000; 
-        }
-    </style>
+    <link rel="stylesheet" href="{{ url_for('static',filename='css/profile.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static',filename='css/normalize.css') }}">
 </head>
     <body>
         <header>
@@ -25,36 +19,50 @@
                 </ul>
             </div>
         </header>
-        <p>
-        {% with messages = get_flashed_messages() %}
-            {% if messages %}
-                <ul>
-                {% for message in messages %}
-                    <li>{{ message }}</li>
-                {% endfor %}
-                </ul>
-            {% endif %}
-        {% endwith %}
-        </p>
+        
         <main>
-        <h1>Profile</h1>
+        <div class="wrapper">
+        <h1 class="profile">Profile</h1>
         <p>Welcome, {{ current_user.email }}</p>
-        <h2>Your reservations</h2>
-        {% if reservations %}
-            <ul>
+        <h2 class="ttop">Your reservations</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% if reservations %}
                 {% for reservation in reservations %}
-                    <li>
-                        {{ reservation.date }}
-                        <form action="{{ url_for('delete_reservation', reservation_id=reservation.id) }}" method="POST">
-                            <input type="submit" class="reservation_button" value="Delete">
-                        </form>
-                    </li>
+                    <tr>
+                        <td>{{ reservation.date }}</td>
+                        <td>
+                            <form action="{{ url_for('delete_reservation', reservation_id=reservation.id) }}" method="POST">
+                                <input type="submit" class="reservation_button" value="Delete">
+                            </form>
+                        </td>
+                    </tr>
                 {% endfor %}
-            </ul>
             {% else %}
-                <p>You have no reservations.</p>
-        {% endif %}
-
+                <tr>
+                    <td colspan="2">You have no reservations.</td>
+                </tr>
+            {% endif %}
+            </tbody>
+        </table>
+        <p>
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                    <ul>
+                    {% for message in messages %}
+                        <li>{{ message }}</li>
+                    {% endfor %}
+                    </ul>
+                {% endif %}
+            {% endwith %}
+            </p>
+        </div>
         </main>
     </body>
 </html>

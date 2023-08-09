@@ -1,56 +1,10 @@
 <html>
 <head>
-{#        <link rel="stylesheet" href="{{ url_for('static',filename='css/normalize.css') }}">#}
         <link rel="stylesheet" href="{{ url_for('static',filename='css/fonts.css') }} ">
         <title>Send</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="stylesheet" href="{{ url_for('static',filename='css/header.css') }}">
-        <style>
-                * {
-                        font-family: 'JetBrains Mono';
-                        font-size: 20px;
-                }
-                ul {
-                        list-style-type: none;
-                        margin: 0;
-                        padding: 0;
-                }
-                body {
-                        background-image: url("/static/img/back2.jpg");
-                        background-color: rgba(255, 255, 255, 0.5);
-                        margin:0;
-                }
-                .wrapper {
-                        background-color: #414141;
-                        position: relative;
-                        top: 50%;
-                        left: 50%;
-                        transform: translate(-50%, -50%);
-                        width: 500px;
-                        text-align: center;
-                        justify-content: center;
-                        align-items: center;
-                        border-radius: 9px;
-                        box-shadow: 0px 0px 48px rgba(0, 0, 0, 0.25);
-                        padding: 50px 0;
-                        color: #FFF;
-                }
-                .form-group {
-                        margin-bottom: 20px;
-                        color: #FFF;
-                }
-
-                .form-button {
-                        margin-top: 20px;
-                        width: 115px;
-                        height: 40px;
-                        background: rgba(43, 188, 93, 0.75);
-                        border-radius: 3px;
-                        color: #fff;
-                        border: none;
-                }
-
-
-        </style>
+        <link rel="stylesheet" href="{{ url_for('static',filename='css/send.css') }}">
 </head>
 
 <body>
@@ -74,7 +28,7 @@
           {% if messages %}
               <ul>
               {% for message in messages %}
-                  <li>{{ message }}</li>
+                  <li class="err-message">{{ message }}</li>
               {% endfor %}
               </ul>
           {% endif %}

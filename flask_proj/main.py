@@ -8,7 +8,7 @@ from flash import make_conf, flasher
 from models import *
 from dotenv import load_dotenv
 from monitor import generate_frames
-from buttons import *
+# from buttons import *
 
 # Load enviroment variables
 load_dotenv()
@@ -23,7 +23,7 @@ login_manager = LoginManager(app)
 conf_path = os.getenv('CONFIG_PATH')  # Init paths for firmwares
 
 # Init additional functions for lab completing
-init_buttons()
+# init_buttons()
 
 # Create relations
 with app.app_context():
@@ -35,6 +35,16 @@ def load_user(user_id):
     return User.query.get(int(user_id))
 
 
+
+def delete_expired_records():
+    expired_records = Reservation.query.filter(
+        (Reservation.date + datetime.timedelta(minutes=15)) < datetime.datetime.utcnow()
+    ).all()
+    for record in expired_records:
+        db.session.delete(record)
+    db.session.commit()
+
+    
 @app.route('/', methods=['GET'])
 def index():
     delete_expired_records()
@@ -49,7 +59,7 @@ def signin():
         user = User.query.filter_by(email=email).first()
         if user and user.password == password:
             login_user(user)
-            return redirect(url_for('main'))
+            return redirect(url_for('reserve'))
         else:
             msg('Login or password is incorrect')
             return redirect(url_for('signin'))
@@ -85,12 +95,6 @@ def logout():
     return redirect(url_for('index'))
 
 
-@app.route('/main')
-@login_required
-def main():
-    return render_template('main.html')
-
-
 @app.route('/reserve', methods=['GET', 'POST'])
 @login_required
 def reserve():
@@ -108,23 +112,13 @@ def reserve():
             db.session.add(new_reservation)
             db.session.commit()
             msg('Reservation successful')
-            return redirect(url_for('main'))
+            return redirect(url_for('reserve'))
     return render_template('reserve.html')
-
-
-def delete_expired_records():
-    expired_records = Reservation.query.filter(
-        (Reservation.date + datetime.timedelta(minutes=15)) < datetime.datetime.utcnow()
-    ).all()
-    for record in expired_records:
-        db.session.delete(record)
-    db.session.commit()
 
 
 @app.route('/send', methods=['GET', 'POST'])
 @login_required
 def send():
-    global created_conf_path
     reservation = Reservation.query.filter_by(user_id=current_user.id).order_by(Reservation.date).first()  # $
     if reservation and reservation.date <= datetime.datetime.now():
         if request.method == 'POST':
@@ -137,7 +131,7 @@ def send():
         return render_template('send.html', ccp=None)
     else:
         msg('You have no reservation or your reservation time has not come yet')
-        return redirect(url_for('main'))
+        return redirect(url_for('reserve'))
 
 
 @app.route('/monitor', methods=['GET', 'POST'])
@@ -150,7 +144,7 @@ def monitor():
     if Reservation.query.filter_by(user_id=current_user.id).order_by(Reservation.date).first():
         return render_template('monitor.html')
     msg('You have no reservation or your reservation time has not come yet')
-    return redirect(url_for('main'))
+    return redirect(url_for('reserve'))
 
 
 @app.route('/simulate_button', methods=['POST'])
