@@ -1,12 +1,11 @@
 
 <html>
 <head>
-    <!-- <link rel="stylesheet" href="{{ url_for('static',filename='css/normalize.css') }}"> -->
-	<link rel="stylesheet" href="{{ url_for('static',filename='css/fonts.css') }} ">
+	<link rel="stylesheet" href="{{ url_for('static',filename='css/fonts.css')}}">
 	<title>Monitor</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-	<link rel="stylesheet" href="{{ url_for('static',filename='css/header.css') }}">
-	<link rel="stylesheet" href="{{ url_for('static',filename='css/monitor.css') }}">
+	<link rel="stylesheet" href="{{ url_for('static',filename='css/header.css')}}">
+	<link rel="stylesheet" href="{{ url_for('static',filename='css/monitor.css')}}">
 </head>
 
 <body>
@@ -20,23 +19,41 @@
 			</ul>
 		</div>
 	</header>
-
-	<script src="{{ url_for('static',filename='js/jquery.js') }}"></script>
+	<select id="dropdown-list" onchange="changeButtons()">
+		<option value="case-1">Keyboard</option>
+		<option value="case-2">Serial Monitor</option>
+	</select>
     <div class="main-box">
-        <div class="button-pad">
-            <button id="button1" class="simulate-button" data-button="button1">1</button>
-            <button id="button2" class="simulate-button" data-button="button2">2</button>
-            <button id="button3" class="simulate-button" data-button="button3">3</button>
-            <button id="button4" class="simulate-button" data-button="button4">4</button>
-        </div>
-
-
-        <div class="wrapper">
-            <h2>Reservation Form</h2>
+		<div class="button-pad" id="button-pad">
+			<button id="button1" class="simulate-button" data-button="button1">1</button>
+			<button id="button2" class="simulate-button" data-button="button2">2</button>
+			<button id="button3" class="simulate-button" data-button="button3">3</button>
+			<button id="button4" class="simulate-button" data-button="button4">4</button>
+		</div>
+		<div class="serial-monitor" id="serial-monitor" style="display: none;">
+			{% if case_2_logs %}
+				<ul>
+				{% for log in case_2_logs %}
+					<li class="logs">{{ log }}</li>
+				{% endfor %}
+				</ul>
+			{% endif %}
+		</div>
+		<div class="wrapper">
+            <h2>Monitor</h2>
             <img id="video_feed" width="640" height="480" />
             <form action="{{ url_for('flash') }}" method="post">
                 <button type="submit" class="form-button">Flash</button>
             </form>
+			{% with messages = get_flashed_messages() %}
+				{% if messages %}
+					<ul>
+					{% for message in messages %}
+						<li class="err-message">{{ message }}</li>
+					{% endfor %}
+					</ul>
+				{% endif %}
+			{% endwith %}
         </div>
     </div>
     <script>
@@ -57,22 +74,22 @@
 			});
 		});
 	</script>
-    <div>
-        {% with messages = get_flashed_messages() %}
-        {% if messages %}
-            <ul>
-            {% for message in messages %}
-                <li>{{ message }}</li>
-            {% endfor %}
-            </ul>
-        {% endif %}
-        {% endwith %}
-    </div>
-    <script type="text/javascript">
-        var video_url = "/video_feed";
-        var video_feed = document.getElementById("video_feed");
-        video_feed.setAttribute("src", video_url);
-    </script>
+	<script>
+		function changeButtons() {
+			var dropdown = document.getElementById("dropdown-list");
+			var selectedValue = dropdown.options[dropdown.selectedIndex].value;
+			var buttonPad1 = document.getElementById("button-pad");
+			var buttonPad2 = document.getElementById("serial-monitor");
+			if (selectedValue === "case-1") {
+				buttonPad1.style.display = "block";
+				buttonPad2.style.display = "none";
+			} else if (selectedValue === "case-2") {
+				buttonPad1.style.display = "none";
+				buttonPad2.style.display = "block";
+			}
+		}
+	</script>
+	<script src="{{ url_for('static',filename='js/jquery.js')}}"></script>
 </body>
 </html>
 

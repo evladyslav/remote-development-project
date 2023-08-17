@@ -23,7 +23,7 @@ login_manager = LoginManager(app)
 conf_path = os.getenv('CONFIG_PATH')  # Init paths for firmwares
 
 # Init additional functions for lab completing
-# init_buttons()
+init_buttons()
 
 # Create relations
 with app.app_context():
@@ -103,8 +103,10 @@ def reserve():
         time = request.form['time']
         datetime_str = date + ' ' + time
         datetime_obj = datetime.datetime.strptime(datetime_str, '%Y-%m-%d %H:%M')
-        reservation = Reservation.query.filter_by(date=datetime_obj).first()
-        if reservation:
+        reservation_prev = datetime_obj - datetime.timedelta(minutes=15)
+        reservation_next = datetime_obj + datetime.timedelta(minutes=15) 
+        reservations = Reservation.query.filter(Reservation.date >= reservation_prev, Reservation.date <= reservation_next).all()
+        if reservations:
             msg('Date and time already reserved')
             return redirect(url_for('reserve'))
         else:
@@ -119,7 +121,7 @@ def reserve():
 @app.route('/send', methods=['GET', 'POST'])
 @login_required
 def send():
-    reservation = Reservation.query.filter_by(user_id=current_user.id).order_by(Reservation.date).first()  # $
+    reservation = Reservation.query.filter_by(user_id=current_user.id).order_by(Reservation.date).first()
     if reservation and reservation.date <= datetime.datetime.now():
         if request.method == 'POST':
             firmware = request.files['firmware']
@@ -142,7 +144,7 @@ def monitor():
         msg('You have to upload binary file')
         return redirect(url_for('send'))
     if Reservation.query.filter_by(user_id=current_user.id).order_by(Reservation.date).first():
-        return render_template('monitor.html')
+        return render_template('monitor.html', case_2_logs=[x for x in range(100)])
     msg('You have no reservation or your reservation time has not come yet')
     return redirect(url_for('reserve'))
 

@@ -40,12 +40,52 @@ body {
     padding: 50px 0;
     color: #FFF;
 }
+.serial-monitor {
+    position: absolute;
+    left: -400px; 
+    background-color: #414141;
+    width: 340px;
+    height: 340px; 
+    justify-content: center;
+    border-radius: 9px;
+    box-shadow: 0px 0px 48px rgba(0, 0, 0, 0.25);
+    padding: 50px 0;
+    color: #FFF;
+    overflow: auto;
+    list-style-type: none; 
+}
+.serial-monitor::-webkit-scrollbar-thumb {
+    background-color: #414141;
+    border-radius: 9px; 
+}
+
+.serial-monitor::-webkit-scrollbar{
+    background-color: #414141;
+    border-radius: 9px; 
+}
+
+.serial-monitor::-webkit-scrollbar-track {
+    background-color: #777777;
+}
+
+
+#dropdown-list {
+    background-color: #414141;
+    color: #fff;
+    border-radius: 9px;
+    box-shadow: 0px 0px 48px rgba(0, 0, 0, 0.25);
+    border: none; 
+    width: 200px;
+    margin: 25px;
+    height: 40px; 
+}
 .simulate-button {
     width: 40px;
     height: 40px;
     border-radius: 3px;
     color: #000;
     border: none;
+    margin: 4px; 
 }
 .main-box {
     margin: 0 auto;
@@ -55,4 +95,8 @@ body {
     align-items: center;
     gap: 50px;
     justify-content: center;
+}
+
+.logs {
+    list-style-type: none;
 }
