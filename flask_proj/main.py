@@ -3,12 +3,15 @@ from flask_login import LoginManager, login_user, logout_user, login_required, c
 import datetime
 import os
 import requests
+import serial 
+
 
 from flash import make_conf, flasher
 from models import *
 from dotenv import load_dotenv
-from monitor import generate_frames
+from monitor import generate_frames, generate_serial_data
 # from buttons import *
+
 
 # Load enviroment variables
 load_dotenv()
@@ -23,7 +26,7 @@ login_manager = LoginManager(app)
 conf_path = os.getenv('CONFIG_PATH')  # Init paths for firmwares
 
 # Init additional functions for lab completing
-init_buttons()
+# init_buttons()
 
 # Create relations
 with app.app_context():
@@ -136,6 +139,11 @@ def send():
         return redirect(url_for('reserve'))
 
 
+@app.route('/stream')
+def stream():    
+    return Response(generate_serial_data(), mimetype='text/event-stream')
+
+
 @app.route('/monitor', methods=['GET', 'POST'])
 @login_required
 def monitor():
@@ -165,7 +173,6 @@ def video_feed():
 @app.route('/flash', methods=['POST'])
 def flash():
     if request.method == "POST":
-        rv = flasher(created_conf_path)
         return redirect(url_for('monitor'))
 
 

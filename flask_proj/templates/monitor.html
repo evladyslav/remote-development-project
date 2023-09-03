@@ -23,21 +23,17 @@
 		<option value="case-1">Keyboard</option>
 		<option value="case-2">Serial Monitor</option>
 	</select>
-    <div class="main-box">
+    <div class="main-box" >
 		<div class="button-pad" id="button-pad">
 			<button id="button1" class="simulate-button" data-button="button1">1</button>
 			<button id="button2" class="simulate-button" data-button="button2">2</button>
 			<button id="button3" class="simulate-button" data-button="button3">3</button>
 			<button id="button4" class="simulate-button" data-button="button4">4</button>
 		</div>
-		<div class="serial-monitor" id="serial-monitor" style="display: none;">
-			{% if case_2_logs %}
-				<ul>
-				{% for log in case_2_logs %}
-					<li class="logs">{{ log }}</li>
-				{% endfor %}
-				</ul>
-			{% endif %}
+		<div class="serial" id="serial" style="display: none;">
+			<div class="serial-monitor" id="serial-monitor"></div>
+			<button class="form-button"id="startButton">Start</button>
+			<button class="form-button"id="stopButton">Stop</button>
 		</div>
 		<div class="wrapper">
             <h2>Monitor</h2>
@@ -75,17 +71,38 @@
 		});
 	</script>
 	<script>
+        const dataContainer = document.getElementById('serial-monitor');
+        const startButton = document.getElementById('startButton');
+        const stopButton = document.getElementById('stopButton');
+        let eventSource;
+
+        startButton.addEventListener('click', function() {
+            eventSource = new EventSource(`/stream?timestamp=${Date.now()}`);
+            eventSource.onmessage = function(event) {
+                const newData = event.data;
+                dataContainer.innerHTML += newData + '<br>';
+                dataContainer.scrollTop = dataContainer.scrollHeight;
+            };
+        });
+
+        stopButton.addEventListener('click', function() {
+            if (eventSource) {
+                eventSource.close();
+            }
+        });
+	</script>
+	<script>
 		function changeButtons() {
 			var dropdown = document.getElementById("dropdown-list");
 			var selectedValue = dropdown.options[dropdown.selectedIndex].value;
-			var buttonPad1 = document.getElementById("button-pad");
-			var buttonPad2 = document.getElementById("serial-monitor");
+			var case1 = document.getElementById("button-pad");
+			var case2 = document.getElementById("serial");
 			if (selectedValue === "case-1") {
-				buttonPad1.style.display = "block";
-				buttonPad2.style.display = "none";
+				case1.style.display = "block";
+				case2.style.display = "none";
 			} else if (selectedValue === "case-2") {
-				buttonPad1.style.display = "none";
-				buttonPad2.style.display = "block";
+				case1.style.display = "none";
+				case2.style.display = "block";
 			}
 		}
 	</script>

@@ -12,25 +12,28 @@ def init_buttons():
         GPIO.setup(pin, GPIO.OUT) 
 
 
+def simulate(pin): 
+    GPIO.output(pin, GPIO.HIGH)
+    time.sleep(0.5) 
+    GPIO.output(pin, GPIO.LOW)
+    time.sleep(0.5)
+    GPIO.output(pin, GPIO.HIGH)
+    time.sleep(0.5)
+
+
 def press_button(button):
     if button == 'button1':
         pin = PINS[0]
-        GPIO.output(pin, GPIO.LOW)
-        time.sleep(0.5) 
-        GPIO.output(pin, GPIO.HIGH) 
-    elif button == 'button2':
+        simulate(pin)
+
+    if button == 'button2':
         pin = PINS[1]
-        GPIO.output(pin, GPIO.LOW) 
-        time.sleep(0.5)  
-        GPIO.output(pin, GPIO.HIGH) 
-    elif button == 'button3':
+        simulate(pin)    
+
+    if button == 'button3':
         pin = PINS[2]
-        GPIO.output(pin, GPIO.LOW) 
-        time.sleep(0.5) 
-        GPIO.output(pin, GPIO.HIGH) 
-    elif button == 'button4':
+        simulate(pin)   
+
+    if button == 'button4':
         pin = PINS[3]
-        GPIO.output(pin, GPIO.LOW)
-        time.sleep(0.5)
-        GPIO.output(pin, GPIO.HIGH) 
-    
+        simulate(pin)   
