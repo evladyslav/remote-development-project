@@ -10,7 +10,7 @@ from flash import make_conf, flasher
 from models import *
 from dotenv import load_dotenv
 from monitor import generate_frames, generate_serial_data
-# from buttons import *
+from buttons import *
 
 
 # Load enviroment variables
@@ -26,7 +26,7 @@ login_manager = LoginManager(app)
 conf_path = os.getenv('CONFIG_PATH')  # Init paths for firmwares
 
 # Init additional functions for lab completing
-# init_buttons()
+init_buttons()
 
 # Create relations
 with app.app_context():
